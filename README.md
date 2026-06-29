@@ -39,6 +39,48 @@ All visuals are fully interactive via slicers for **Order Date**, **Delivery Dat
 
 <img width="1141" height="76" alt="fnpkpi" src="https://github.com/user-attachments/assets/7d7ced91-eb8f-471a-9606-d4b520516803" />
 
+## 📊 Data Architecture & Data Model
+
+To power our analytical dashboards and customer segmentation, we constructed a relational data model using a Star Schema design. This setup establishes relationships between our core transaction registry and dimension tables to allow for deep-dive slicing and dicing of metrics.
+
+### Data Model Overview
+
+Below is the entity-relationship diagram (ERD) mapping out how our datasets connect:
+
+<img width="1090" height="785" alt="fnp_mode" src="https://github.com/user-attachments/assets/537e5eb2-4ad8-4392-a4dd-a38a1a3eaf34" />
+
+### Table Breakdown & Schema Structure
+
+The architecture consists of three primary tables linked by one-to-many ($1 \rightarrow *$) relationships:
+
+#### 1. 👥 `customer` (Dimension Table)
+Contains master data regarding customer demographics alongside advanced transactional segmentation attributes:
+*   **Demographics:** `Name`, `City`, `Contact_Number`, `Email`, `Gender`, `Address`.
+*   **RFM Metrics:** `Raw_Recency`, `Raw_Frequency`, `Raw_Monetary`.
+*   **Scoring & Segmentation:** `R_Score`, `F_Score`, `M_Score`, `RMF_Cell`, and `Customer_Segment` (used to categorize users into groups like Champions, At-Risk, Loyal Customers, etc.).
+*   **Cohort Tracking:** `Cohort_Start_Date` for tracking user retention over time.
+
+#### 2. 🛍️ `orders` (Fact Table)
+The central core transactional table that records every individual purchase activity and acts as the bridge between customers and products:
+*   **Keys:** `Order_ID`, `Customer_ID`, `Product_ID`.
+*   **Time & Delivery Analysis:** Tracks precise ordering patterns (`Order_Date`, `Order_Time`, `Month Name`, `Hour`, `Day`) and delivery fulfillment cycles (`Delivery_Date`, `Delivery_Time`, `Hour(delivery)`).
+*   **Financials:** `Quantity`, `products.Price (INR)`, and calculated `total_revenue`.
+
+#### 3. 📦 `products` (Dimension Table)
+Stores product catalog metadata and inventory classification data:
+*   **Attributes:** `Product_ID`, `Product_Name`, `Category`, `Price (INR)`, `Occasion`, `Description`.
+*   **Revenue Performance:** Aggregated calculated fields including `Product_Revenue`, `Running_Total_Revenue`, and `Revenue_Percentage`.
+*   **Inventory/Sales Classification:** Features `ABC_Class` categorization to segment high-value products from low-performing inventory.
+
+---
+
+### Key Analysis Enabled by This Model
+*   **RFM Customer Segmentation:** Grouping customers by their buying patterns to run targeted marketing campaigns.
+*   **Sales & Revenue Trends:** Tracking hourly, daily, and monthly revenue performance.
+*   **Product ABC Analysis:** Identifying which specific categories and products drive 80% of the company's total revenue.
+*   **Delivery Performance:** Calculating the time difference (`diference`) between ordering and delivery to find operational bottlenecks.
+
+
 
 ## 💡 Key Insights
 
